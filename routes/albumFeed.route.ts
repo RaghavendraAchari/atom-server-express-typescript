@@ -22,6 +22,24 @@ router.get("/", basicPagingValidationSchema, validateRequest, async (req: Reques
     }
 });
 
+router.get("/:id", async (req: Request, res: Response) => {
+    const id = req.params['id'];
+    console.log(id);
+
+    try {
+        const data = await albumFeedService.getAlbumFeedById(id);
+        console.log(data);
+
+        if (data == null) {
+            return res.status(404).json({ message: "No data found" })
+        }
+
+        return res.status(200).json(data);
+    } catch (e) {
+        return res.status(500).send("Error in fetching data")
+    }
+});
+
 router.post("/", authenticate, albumFeedValidation, validateRequest, async (req: Request, res: Response) => {
     const data = matchedData(req) as AlbumFeedResponseObject;
 
@@ -32,6 +50,24 @@ router.post("/", authenticate, albumFeedValidation, validateRequest, async (req:
         console.log(e);
 
         return res.status(500).send("Error in fetching the data. Internal server error.")
+    }
+});
+
+router.delete("/:id", authenticate, async (req: Request, res: Response) => {
+    const id = req.params['id'];
+    console.log(id);
+
+    try {
+        const data = await albumFeedService.getAlbumFeedById(id);
+        console.log(data);
+
+        if (data == null) {
+            return res.status(404).json({ message: "No data found" })
+        }
+
+        return res.status(200).json(data);
+    } catch (e) {
+        return res.status(500).send("Error in fetching data")
     }
 });
 

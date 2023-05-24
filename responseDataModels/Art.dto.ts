@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 
-interface Art {
+export default interface ArtResponseData {
     _id: ObjectId | null,
     title: String,
     description: String,
@@ -8,5 +8,3 @@ interface Art {
     thumbnailUrl: String,
     originalFileUrl: String
 }
-
-export default Art;

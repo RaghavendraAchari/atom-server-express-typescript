@@ -17,19 +17,7 @@ export async function getAllAlbumFeed(page: number, size: number, sortField: str
     console.log(photos);
 
     const data: AlbumFeedResponseObject[] = albumFeeds.albums.map(albumFeed => {
-        const newObject: AlbumFeedResponseObject = {
-            _id: albumFeed._id,
-            title: albumFeed.title,
-            description: albumFeed.description,
-            category: albumFeed.category,
-            date: albumFeed.date,
-            details: albumFeed.details,
-            photos: albumFeed.photos.map(id => {
-                return photos.find((photo) => photo._id?.equals(id))
-            })
-        }
-
-        return newObject;
+        return mapToAlbumFeedData(albumFeed, photos);
     });
 
     return {
@@ -62,7 +50,51 @@ async function addAlbumFeed(data: AlbumFeedResponseObject) {
     return insertedId;
 }
 
+async function getAlbumFeedById(id: string) {
+    const album = await albumFeedRepo.getAlbumFeedById(new ObjectId(id));
+
+    if (album === null)
+        return null;
+
+    const ids: ObjectId[] = [];
+
+    album?.photos.forEach((it) => {
+        ids.push(new ObjectId(it));
+    });
+
+    const photos: Photo[] = await photoService.getAllPhotoByIdList(ids);
+
+    return mapToAlbumFeedData(album, photos);
+}
+
+async function deleteAlbumFeedById(id: string) {
+    const data = await albumFeedRepo.deleteAlbumfeedById(new ObjectId(id));
+
+    if (data.ok)
+        return true;
+    else
+        return false;
+}
+
+function mapToAlbumFeedData(albumFeed: AlbumFeed, photos: Photo[]) {
+    const newObject: AlbumFeedResponseObject = {
+        _id: albumFeed._id,
+        title: albumFeed.title,
+        description: albumFeed.description,
+        category: albumFeed.category,
+        date: albumFeed.date,
+        details: albumFeed.details,
+        photos: albumFeed.photos.map(id => {
+            return photos.find((photo) => photo._id?.equals(id))
+        })
+    }
+
+    return newObject;
+}
+
 export default {
     getAllAlbumFeed,
-    addAlbumFeed
+    addAlbumFeed,
+    getAlbumFeedById,
+    deleteAlbumFeedById
 }

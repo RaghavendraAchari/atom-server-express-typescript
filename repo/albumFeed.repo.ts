@@ -43,7 +43,7 @@ async function getAlbumFeedById(id: ObjectId) {
     const db = await getDb();
 
     const data = await db.collection<AlbumFeed>(collectionName)
-        .find<AlbumFeed>({ _id: id });
+        .findOne<AlbumFeed>({ _id: id });
 
     return data;
 
@@ -68,9 +68,17 @@ async function updateAlbumFeed(album: AlbumFeed) {
     return data.modifiedCount;
 }
 
+async function deleteAlbumfeedById(id: ObjectId) {
+    const db = await getDb();
+    const data = await db.collection<AlbumFeed>(collectionName).findOneAndDelete({ _id: id });
+
+    return data;
+}
+
 export default {
     getAllAlbumFeeds,
     getAlbumFeedById,
     addAlbumFeed,
-    updateAlbumFeed
+    updateAlbumFeed,
+    deleteAlbumfeedById
 }

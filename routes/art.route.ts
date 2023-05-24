@@ -1,5 +1,5 @@
 import express, { Router, Request, Response } from "express";
-import { matchedData, validationResult } from "express-validator";
+import { matchedData } from "express-validator";
 import { ObjectId } from "mongodb";
 
 import { authenticate } from "../auth/auth";
@@ -8,6 +8,7 @@ import artValidation from "../utils/validations/artRequestModelValidation";
 
 import artService from "../service/art.service";
 import validateRequest from "../utils/validator";
+import logger from "../utils/logger";
 
 const router: Router = express.Router();
 
@@ -25,19 +26,18 @@ router.get("/", basicPagingValidationSchema, validateRequest, async (req: Reques
 
 router.get("/:id", async (req: Request, res: Response) => {
     const id = req.params['id'];
-    console.log(id);
+    logger.info(id, "Received data");
 
     try {
         const data = await artService.getArtById(new ObjectId(id));
         console.log(data);
 
-        if (data == null) {
-            return res.status(404).json({ message: "No data found" })
-        }
+        if (data == null)
+            return res.status(404).json({ message: "No data found" });
 
         return res.status(200).json(data);
     } catch (e) {
-        return res.status(500).send("Error in fetching data")
+        return res.status(500).send("Error in fetching data");
     }
 });
 
@@ -45,7 +45,7 @@ router.post("/", authenticate, artValidation, validateRequest, async (req: Reque
     const data = matchedData(req);
     const user: any = req.body.user;
 
-    console.log({ data, user });
+    logger.info({ data, user }, "Received data");
 
     try {
         const insertedId = await artService.addArt(data);
