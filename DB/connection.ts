@@ -19,8 +19,7 @@ export async function connectToDatabase() {
 
     await client.connect();
 
-    // db = await client.db(process.env.DB_NAME);
-    db = await client.db('atom-prod');
+    db = await client.db(process.env.DB_NAME);
 
     console.log(`Successfully connected to database: ${db.databaseName}`);
 }
