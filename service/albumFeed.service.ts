@@ -28,6 +28,28 @@ export async function getAllAlbumFeed(page: number, size: number, sortField: str
     };
 }
 
+export async function getAllAlbumFeedForAdmin() {
+    const albumFeeds = await albumFeedRepo.getAllAlbumFeedsForAdmin();
+
+    const ids: ObjectId[] = [];
+    albumFeeds.albums.forEach((it) => {
+        it.photos.forEach((id: string) => ids.push(new ObjectId(id)));
+    });
+
+    const photos: Photo[] = await photoService.getAllPhotoByIdList(ids);
+
+    console.log(photos);
+
+    const data: AlbumFeedResponseObject[] = albumFeeds.albums.map(albumFeed => {
+        return mapToAlbumFeedData(albumFeed, photos);
+    });
+
+    return {
+        albums: data,
+        totalCount: albumFeeds.totalCount,
+    };
+}
+
 async function addAlbumFeed(data: AlbumFeedResponseObject) {
     const photos: Photo[] = data.photos as Photo[];
 
@@ -42,7 +64,8 @@ async function addAlbumFeed(data: AlbumFeedResponseObject) {
         date: data.date,
         description: data.description,
         details: data.details,
-        photos: values.map(it => it?.toString()) as string[]
+        photos: values.map(it => it?.toString()) as string[],
+        publishable: data.publishable
     }
 
     const insertedId = await albumFeedRepo.addAlbumFeed(album);
@@ -86,6 +109,24 @@ function mapToAlbumFeedData(albumFeed: AlbumFeed, photos: Photo[]) {
         details: albumFeed.details,
         photos: albumFeed.photos.map(id => {
             return photos.find((photo) => photo._id?.equals(id))
+        }),
+        publishable: albumFeed.publishable
+    }
+
+    return newObject;
+}
+
+function mapToAlbumFeedDataForAdmin(albumFeed: AlbumFeed, photos: Photo[]) {
+    const newObject: AlbumFeedResponseObject = {
+        _id: albumFeed._id,
+        title: albumFeed.title,
+        description: albumFeed.description,
+        category: albumFeed.category,
+        date: albumFeed.date,
+        details: albumFeed.details,
+        publishable: albumFeed.publishable,
+        photos: albumFeed.photos.map(id => {
+            return photos.find((photo) => photo._id?.equals(id))
         })
     }
 
@@ -96,5 +137,6 @@ export default {
     getAllAlbumFeed,
     addAlbumFeed,
     getAlbumFeedById,
-    deleteAlbumFeedById
+    deleteAlbumFeedById,
+    getAllAlbumFeedForAdmin
 }

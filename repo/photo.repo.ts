@@ -23,6 +23,20 @@ export async function getAllPhotos(pageSize: number, size: number, sortBy: strin
     }
 }
 
+export async function getAllPhotosForAdmin() {
+    const db = await getDb();
+
+    try {
+        const data = await db.collection<Photo>(collectionName).find<Photo[]>({})
+            .sort("date", "desc").toArray();
+
+        return data;
+    } catch (e) {
+        logger.info(e);
+        throw e;
+    }
+}
+
 export async function getPhotosWithMultipleIds(ids: ObjectId[]) {
     const db = await getDb();
     logger.info({ ids });
@@ -125,5 +139,6 @@ export default {
     deleteById,
     updatePhoto,
     getPhotosWithMultipleIds,
-    addMultiplePhotos
+    addMultiplePhotos,
+    getAllPhotosForAdmin
 }

@@ -16,7 +16,9 @@ export async function getAllAlbumFeeds(page: number, size: number, sortField: st
     });
 
 
-    const filter: any = {};
+    const filter: any = {
+        publishable: true
+    };
 
     if (category !== "all") {
         filter.category = {
@@ -36,6 +38,21 @@ export async function getAllAlbumFeeds(page: number, size: number, sortField: st
         albums: await data.toArray(),
         totalCount,
         currentPage: page
+    };
+}
+
+export async function getAllAlbumFeedsForAdmin() {
+    const db = await getDb();
+
+    const data = await db.collection<AlbumFeed>(collectionName)
+        .find()
+        .sort("date", "desc");
+
+    const totalCount: number = await data.count();
+
+    return {
+        albums: await data.toArray(),
+        totalCount
     };
 }
 
@@ -80,5 +97,6 @@ export default {
     getAlbumFeedById,
     addAlbumFeed,
     updateAlbumFeed,
-    deleteAlbumfeedById
+    deleteAlbumfeedById,
+    getAllAlbumFeedsForAdmin
 }

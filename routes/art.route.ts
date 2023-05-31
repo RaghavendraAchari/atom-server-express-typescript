@@ -57,12 +57,12 @@ router.post("/", authenticate, artValidation, validateRequest, async (req: Reque
 
 })
 
-router.put("/", authenticate, artValidation, validateRequest, async (req: Request, res: Response) => {
+router.put("/:id", authenticate, artValidation, validateRequest, async (req: Request, res: Response) => {
     const data = matchedData(req);
     console.log(data);
 
     try {
-        const insertedId = await artService.addArt(data);
+        const insertedId = await artService.updateArt(data);
 
         return res.status(201).json({ message: "data created successfully", id: insertedId });
     } catch (e) {
@@ -76,6 +76,27 @@ router.delete("/:id", authenticate, async (req: Request, res: Response) => {
 
     try {
         const deleted = await artService.deleteArtById(new ObjectId(id));
+        if (!deleted)
+            return res.status(500).json({
+                message: "Error in deleting the data",
+                id: id
+            });
+        else
+            return res.status(200).json({
+                message: "data deleted successfully",
+                id: id
+            })
+    } catch (e) {
+        res.status(500).send("Internal server error");
+    }
+})
+
+router.post("/publish/:id", authenticate, async (req: Request, res: Response) => {
+    const id = req.params['id'];
+    console.log(id);
+
+    try {
+        const deleted = await artService.publishArt(new ObjectId(id));
         if (!deleted)
             return res.status(500).json({
                 message: "Error in deleting the data",

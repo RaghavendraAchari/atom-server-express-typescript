@@ -6,7 +6,8 @@ interface Art {
     description: String,
     date: Date,
     thumbnailUrl: String,
-    originalFileUrl: String
+    originalFileUrl: String,
+    publishable: boolean
 }
 
 export default Art;

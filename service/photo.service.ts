@@ -9,7 +9,11 @@ export async function getAllPhotos(pageSize: number, size: number, sortBy: strin
     return await photoRepo.getAllPhotos(pageSize, size, sortBy, sortDirection, filterBy);
 }
 
-export async function addPhoto(data: any) {
+async function getAllPhotosForAdmin() {
+    return await photoRepo.getAllPhotosForAdmin();
+}
+
+async function addPhoto(data: any) {
     const photo: Photo = {
         _id: null,
         thumbnailUrl: data.thumbnailLink,
@@ -50,5 +54,6 @@ export default {
     deletePhotoById,
     updatePhoto,
     getAllPhotoByIdList,
-    addMultiplePhotos
+    addMultiplePhotos,
+    getAllPhotosForAdmin
 }

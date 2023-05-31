@@ -8,13 +8,15 @@ import { connectToDatabase, getConnectionObject } from './DB/connection';
 import albumFeedRouter from "./routes/albumFeed.route";
 import artRouter from "./routes/art.route";
 import photoRouter from "./routes/photo.route";
+import adminRouter from "./routes/admin.route";
+
 import { authenticate, generateToken } from './auth/auth';
 import categoryRouter from './routes/category.route';
 
 dotenv.config();
 
 const app: Express = express();
-const port = process.env.PORT;
+const port = 7890;
 
 app.use(cors<Request>())
 app.use(express.urlencoded({ extended: true }));
@@ -25,6 +27,7 @@ app.use("/api/albumfeeds", albumFeedRouter);
 app.use("/api/arts", artRouter);
 app.use("/api/photos", photoRouter)
 app.use("/api/categories", categoryRouter)
+app.use("/api/admin", adminRouter);
 
 //home route
 app.post('/token', async (req: Request, res: Response) => {

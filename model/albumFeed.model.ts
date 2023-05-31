@@ -8,7 +8,8 @@ export interface AlbumFeed {
     description: String,
     photos: string[],
     details: String,
-    category: String[]
+    category: String[],
+    publishable: boolean
 }
 
 export interface AlbumFeedResponseObject {
@@ -18,5 +19,6 @@ export interface AlbumFeedResponseObject {
     description: String,
     photos: (Photo | undefined)[],
     details: String,
-    category: String[]
+    category: String[],
+    publishable: boolean
 }

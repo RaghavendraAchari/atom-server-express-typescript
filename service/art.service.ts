@@ -17,6 +17,16 @@ export async function getAllArts(pageSize: number, size: number, sortBy: string,
     }
 }
 
+export async function getAllArtsForAdmin() {
+    const data = await dbRepo.getAllArtForAdmin();
+    const arts: ArtResponseData[] = data.arts.map(art => mapToArt(art));
+
+    return {
+        arts: arts,
+        totalCount: data.totalCount,
+    }
+}
+
 
 export async function addArt(data: any) {
     const art: Art = {
@@ -26,10 +36,30 @@ export async function addArt(data: any) {
         thumbnailUrl: data.thumbnailUrl,
         originalFileUrl: data.originalFileUrl,
         date: data.date,
+        publishable: data.publishable
     }
     console.log(art);
 
     return await dbRepo.addArt(art);
+}
+
+async function updateArt(data: any) {
+    const art: Art = {
+        _id: data._id,
+        title: data.title,
+        description: data.description,
+        thumbnailUrl: data.thumbnailUrl,
+        originalFileUrl: data.originalFileUrl,
+        date: data.date,
+        publishable: data.publishable
+    }
+    console.log(art);
+
+    return await dbRepo.updateArt(art);
+}
+
+async function publishArt(id: ObjectId) {
+    return await artRepo.publishArt(id);
 }
 
 async function getArtById(id: ObjectId) {
@@ -60,6 +90,9 @@ function mapToArt(art: Art): ArtResponseData {
 export default {
     getAllArts,
     addArt,
+    updateArt,
     getArtById,
-    deleteArtById
+    deleteArtById,
+    getAllArtsForAdmin,
+    publishArt
 }

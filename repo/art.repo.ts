@@ -9,10 +9,31 @@ export async function getAllArt(pageSize: number, size: number, sortBy: string, 
     console.log({ pageSize, size, sortBy, sortDirection, filterBy });
 
     try {
-        const data = await db.collection<Art>(collectionName).find<Art>({})
+        const data = await db.collection<Art>(collectionName).find<Art>({
+            publishable: true
+        })
             .skip(pageSize * size)
             .limit(size)
             .sort(sortBy, sortDirection as SortDirection).toArray();
+        const count = await db.collection<Art>(collectionName).countDocuments();
+
+        return {
+            arts: data,
+            totalCount: count
+        };
+    } catch (e) {
+        console.log(e);
+        throw e;
+    }
+}
+
+async function getAllArtForAdmin() {
+    const db = await getDb();
+
+    try {
+        const data = await db.collection<Art>(collectionName).find<Art>({})
+            .sort("date", "desc").toArray();
+
         const count = await db.collection<Art>(collectionName).countDocuments();
 
         return {
@@ -89,10 +110,35 @@ async function deleteById(id: ObjectId) {
     }
 }
 
+async function publishArt(id: ObjectId) {
+    const db = await getDb();
+
+    try{
+        const result = await db.collection<Art>(collectionName).findOneAndUpdate({
+            _id: id,
+            publishable: false
+        }, {
+            $set: {
+                publishable: true
+            }
+        });
+
+        if(result.ok)
+            return true;
+        else
+            return false;
+    }catch(e){
+        throw e;
+    }
+    
+}
+
 export default {
     addArt,
     getAllArt,
     findById,
     deleteById,
-    updateArt
+    updateArt,
+    getAllArtForAdmin,
+    publishArt
 }
