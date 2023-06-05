@@ -36,7 +36,8 @@ export async function addArt(data: any) {
         thumbnailUrl: data.thumbnailUrl,
         originalFileUrl: data.originalFileUrl,
         date: data.date,
-        publishable: data.publishable
+        publishable: data.publishable,
+        midResUrl: data.midResUrl
     }
     console.log(art);
 
@@ -51,7 +52,8 @@ async function updateArt(data: any) {
         thumbnailUrl: data.thumbnailUrl,
         originalFileUrl: data.originalFileUrl,
         date: data.date,
-        publishable: data.publishable
+        publishable: data.publishable,
+        midResUrl: data.midResUrl
     }
     console.log(art);
 
