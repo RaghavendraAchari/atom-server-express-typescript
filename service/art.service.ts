@@ -82,7 +82,8 @@ function mapToArt(art: Art): ArtResponseData {
         description: art.description,
         originalFileUrl: art.originalFileUrl,
         title: art.title,
-        thumbnailUrl: art.thumbnailUrl
+        thumbnailUrl: art.thumbnailUrl,
+        midResUrl: art.midResUrl
     }
     return newArt;
 }

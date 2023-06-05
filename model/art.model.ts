@@ -7,6 +7,7 @@ interface Art {
     date: Date,
     thumbnailUrl: String,
     originalFileUrl: String,
+    midResUrl: String,
     publishable: boolean
 }
 

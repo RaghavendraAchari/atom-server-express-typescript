@@ -6,5 +6,6 @@ export default interface ArtResponseData {
     description: String,
     date: Date,
     thumbnailUrl: String,
-    originalFileUrl: String
+    originalFileUrl: String,
+    midResUrl: String
 }
