@@ -33,8 +33,8 @@ export async function addArt(data: any) {
         _id: null,
         title: data.title,
         description: data.description,
-        thumbnailUrl: data.thumbnailUrl,
-        originalFileUrl: data.originalFileUrl,
+        thumbnailUrl: data.thumbnailLink,
+        originalFileUrl: data.originalFileLink,
         date: data.date,
         publishable: data.publishable,
         midResUrl: data.midResUrl
