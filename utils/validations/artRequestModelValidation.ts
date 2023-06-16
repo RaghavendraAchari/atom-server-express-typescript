@@ -1,7 +1,7 @@
 import { body } from "express-validator"
 
 const artValidation = [
-    body('_id'),
+    body('_id').optional().isMongoId(),
     body('title').notEmpty(),
     body('thumbnailLink').notEmpty().isURL({protocols:['http', 'https']}),
     body('originalFileLink').notEmpty().isURL({protocols:['http', 'https']}),
