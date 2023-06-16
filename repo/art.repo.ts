@@ -70,7 +70,9 @@ export async function updateArt(art: Art) {
     try {
         console.log("Updating : " + art);
 
-        const inserted = await db.collection<Art>(collectionName).findOneAndUpdate({ _id: art._id }, {...art});
+        const inserted = await db.collection<Art>(collectionName).findOneAndUpdate({ _id: art._id }, {
+            $set: {...art}
+        });
 
         return inserted.value;
     } catch (e) {
