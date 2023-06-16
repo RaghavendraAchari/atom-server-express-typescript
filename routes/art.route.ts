@@ -64,7 +64,7 @@ router.put("/:id", authenticate, artValidation, validateRequest, async (req: Req
     try {
         const insertedId = await artService.updateArt(data);
 
-        return res.status(201).json({ message: "data created successfully", id: insertedId });
+        return res.status(201).json({ message: "data created successfully", id: insertedId?._id });
     } catch (e) {
         res.status(500).send("Internal server error");
     }
