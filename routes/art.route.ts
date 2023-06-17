@@ -1,6 +1,7 @@
 import express, { Router, Request, Response } from "express";
 import { matchedData } from "express-validator";
 import { ObjectId } from "mongodb";
+import ErrorResponse from "../responseDataModels/Error";
 
 import { authenticate } from "../auth/auth";
 import basicPagingValidationSchema from "../utils/validations/requestParamValidationSchema";
@@ -33,11 +34,11 @@ router.get("/:id", async (req: Request, res: Response) => {
         console.log(data);
 
         if (data == null)
-            return res.status(404).json({ message: "No data found" });
+            return res.status(404).json(new ErrorResponse("No data found"));
 
         return res.status(200).json(data);
     } catch (e) {
-        return res.status(500).send("Error in fetching data");
+        return res.status(500).send(new ErrorResponse("Error in fetching data"));
     }
 });
 
@@ -52,7 +53,7 @@ router.post("/", authenticate, artValidation, validateRequest, async (req: Reque
 
         return res.status(201).json({ message: "data created successfully", id: insertedId });
     } catch (e) {
-        res.status(500).send("Internal server error");
+        res.status(500).send(new ErrorResponse("Internal server error"));
     }
 
 })
@@ -62,11 +63,15 @@ router.put("/:id", authenticate, artValidation, validateRequest, async (req: Req
     console.log(data);
 
     try {
-        const insertedId = await artService.updateArt(data);
+        const updatedDocument = await artService.updateArt(data);
 
-        return res.status(201).json({ message: "data created successfully", id: insertedId?._id });
+        if(updatedDocument !== null)
+            return res.status(201).json({ message: "data created successfully", _id: updatedDocument._id });
+        
+        return res.status(404).json({message: "No matching data found to update"});
+
     } catch (e) {
-        res.status(500).send("Internal server error");
+        res.status(500).send(new ErrorResponse("Internal server error"));
     }
 })
 
@@ -87,7 +92,7 @@ router.delete("/:id", authenticate, async (req: Request, res: Response) => {
                 id: id
             })
     } catch (e) {
-        res.status(500).send("Internal server error");
+        return res.status(500).send(new ErrorResponse("Internal server error"));
     }
 })
 
@@ -108,7 +113,7 @@ router.post("/publish/:id", authenticate, async (req: Request, res: Response) =>
                 id: id
             })
     } catch (e) {
-        res.status(500).send("Internal server error");
+        return res.status(500).send(new ErrorResponse("Internal server error"));
     }
 })
 

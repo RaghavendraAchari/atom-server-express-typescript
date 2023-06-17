@@ -46,7 +46,7 @@ export async function addArt(data: any) {
 
 async function updateArt(data: any) {
     const art: Art = {
-        _id: data._id,
+        _id: new ObjectId(data._id),
         title: data.title,
         description: data.description,
         thumbnailUrl: data.thumbnailLink,

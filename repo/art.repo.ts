@@ -1,6 +1,7 @@
 import { getDb } from "../DB/connection";
 import Art from "../model/art.model";
 import { ObjectId, SortDirection } from 'mongodb';
+import logger from "../utils/logger";
 
 const collectionName = "Art";
 
@@ -68,11 +69,16 @@ export async function updateArt(art: Art) {
     console.log("connected to bd " + db);
 
     try {
-        console.log("Updating : " + art);
+        console.log("Updating : ", {...art});
 
-        const inserted = await db.collection<Art>(collectionName).findOneAndUpdate({ _id: art._id }, {
-            $set: {...art}
-        });
+        const inserted = await db.collection<Art>(collectionName)
+            .findOneAndUpdate({_id: art._id}, {
+                $set: {
+                    ...art
+                }
+            }, { returnDocument: "after" });
+        
+        console.log({inserted}, "Updated the art");
 
         return inserted.value;
     } catch (e) {
