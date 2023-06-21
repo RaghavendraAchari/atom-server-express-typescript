@@ -7,8 +7,11 @@ const pageSize = 5;
 
 export async function getAllAlbumFeeds(page: number, size: number, sortField: string, sortOrder: string, category: string) {
     const db = await getDb();
+    const skip = page * size;
+
     console.log({
         page,
+        skip,
         size,
         sortField,
         sortOrder,
@@ -27,15 +30,17 @@ export async function getAllAlbumFeeds(page: number, size: number, sortField: st
 
     const collection = await db.collection<AlbumFeed>(collectionName);
 
-    const data = collection.find(filter)
-                            .skip(page * pageSize)
+    const data = await collection.find(filter)
+                            .skip(skip)
                             .limit(size)
-                            .sort(sortField, sortOrder as SortDirection);
+                            .sort(sortField, sortOrder as SortDirection).toArray();
 
     const totalCount: number = await collection.countDocuments(filter);
 
+    console.log({data});
+
     return {
-        albums: await data.toArray(),
+        albums: data,
         totalCount,
         currentPage: page
     };
