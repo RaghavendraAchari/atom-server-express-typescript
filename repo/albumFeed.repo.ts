@@ -15,7 +15,6 @@ export async function getAllAlbumFeeds(page: number, size: number, sortField: st
         category
     });
 
-
     const filter: any = {
         publishable: true
     };
@@ -26,13 +25,14 @@ export async function getAllAlbumFeeds(page: number, size: number, sortField: st
         }
     }
 
-    const data = await db.collection<AlbumFeed>(collectionName)
-        .find(filter)
-        .skip(page * pageSize)
-        .limit(size)
-        .sort(sortField, sortOrder as SortDirection);
+    const collection = await db.collection<AlbumFeed>(collectionName);
 
-    const totalCount: number = await data.count();
+    const data = collection.find(filter)
+                            .skip(page * pageSize)
+                            .limit(size)
+                            .sort(sortField, sortOrder as SortDirection);
+
+    const totalCount: number = await collection.countDocuments(filter);
 
     return {
         albums: await data.toArray(),
@@ -44,11 +44,10 @@ export async function getAllAlbumFeeds(page: number, size: number, sortField: st
 export async function getAllAlbumFeedsForAdmin() {
     const db = await getDb();
 
-    const data = await db.collection<AlbumFeed>(collectionName)
-        .find()
-        .sort("date", "desc");
+    const collection = await db.collection<AlbumFeed>(collectionName);
 
-    const totalCount: number = await data.count();
+    const data = await collection.find().sort("date", "desc");
+    const totalCount: number = await collection.countDocuments();
 
     return {
         albums: await data.toArray(),
