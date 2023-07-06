@@ -1,11 +1,13 @@
 import express, { Router, Request, Response } from "express";
 import albumFeedService, { getAllAlbumFeed } from "../service/albumFeed.service";
 import basicPagingValidationSchema from "../utils/validations/requestParamValidationSchema";
-import albumFeedValidation from "../utils/validations/validations";
+import albumFeedValidation, { albumFeedUpdateDataValidation } from "../utils/validations/validations";
 import validateRequest from "../utils/validator";
 import { matchedData } from "express-validator";
 import { authenticate } from "../auth/auth";
 import { AlbumFeedResponseObject } from "../model/albumFeed.model";
+import AlbumUpdateRequest from "../requestDataModels/AlbumUpdateRequest";
+import { ObjectId } from "mongodb";
 
 const router: Router = express.Router();
 
@@ -46,6 +48,20 @@ router.post("/", authenticate, albumFeedValidation, validateRequest, async (req:
     try {
         const insertedId = await albumFeedService.addAlbumFeed(data);
         return res.status(200).json({ insertedId });
+    } catch (e) {
+        console.log(e);
+
+        return res.status(500).send("Error in fetching the data. Internal server error.")
+    }
+});
+
+router.put("/:id", authenticate, albumFeedUpdateDataValidation, validateRequest, async (req: Request, res: Response) => {
+    const data = matchedData(req) as AlbumUpdateRequest;
+    data._id = new ObjectId(data._id);
+
+    try {
+        const updatedData = await albumFeedService.updateAlbumFeed(data);
+        return res.status(200).send(updatedData);
     } catch (e) {
         console.log(e);
 

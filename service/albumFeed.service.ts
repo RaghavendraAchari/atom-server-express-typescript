@@ -3,6 +3,7 @@ import { AlbumFeed, AlbumFeedResponseObject } from "../model/albumFeed.model";
 import Photo from "../model/photo.model";
 import albumFeedRepo from "../repo/albumFeed.repo";
 import photoService from "./photo.service";
+import AlbumUpdateRequest from "../requestDataModels/AlbumUpdateRequest";
 
 export async function getAllAlbumFeed(page: number, size: number, sortField: string, sortOrder: string, category: string) {
     const albumFeeds = await albumFeedRepo.getAllAlbumFeeds(page - 1, size, sortField, sortOrder, category);
@@ -73,6 +74,12 @@ async function addAlbumFeed(data: AlbumFeedResponseObject) {
     return insertedId;
 }
 
+async function updateAlbumFeed(data: AlbumUpdateRequest) {
+    const updatedData = await albumFeedRepo.updateAlbumFeed(data);
+
+    return updatedData;
+}
+
 async function getAlbumFeedById(id: string) {
     const album = await albumFeedRepo.getAlbumFeedById(new ObjectId(id));
 
@@ -138,5 +145,6 @@ export default {
     addAlbumFeed,
     getAlbumFeedById,
     deleteAlbumFeedById,
-    getAllAlbumFeedForAdmin
+    getAllAlbumFeedForAdmin,
+    updateAlbumFeed
 }

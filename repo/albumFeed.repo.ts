@@ -1,6 +1,7 @@
 import { ObjectId, SortDirection } from "mongodb";
 import { getDb } from "../DB/connection";
 import { AlbumFeed } from "../model/albumFeed.model";
+import AlbumUpdateRequest from "../requestDataModels/AlbumUpdateRequest";
 
 const collectionName = "AlbumFeed";
 const pageSize = 5;
@@ -80,13 +81,19 @@ async function addAlbumFeed(album: AlbumFeed) {
 
 }
 
-async function updateAlbumFeed(album: AlbumFeed) {
+async function updateAlbumFeed(album: AlbumUpdateRequest) {
     const db = await getDb();
+    console.log("Updating album ", {album});
+    
 
     const data = await db.collection<AlbumFeed>(collectionName)
-        .updateOne({ _id: album._id }, album);
+        .findOneAndUpdate({ _id: album._id },{
+            $set: album
+        }, {
+            returnDocument: 'after'
+        });
 
-    return data.modifiedCount;
+    return data.value;
 }
 
 async function deleteAlbumfeedById(id: ObjectId) {
