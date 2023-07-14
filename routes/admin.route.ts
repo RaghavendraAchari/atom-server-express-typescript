@@ -30,6 +30,16 @@ router.get("/arts", authenticate, async (req: Request, res: Response) => {
     }
 });
 
+router.get("/articles", authenticate, async (req: Request, res: Response) => {
+    try {
+        const data = await adminService.getAllArticles();
+
+        return res.status(200).json(data);
+    } catch (e) {
+        return res.status(500).send("Error in fetching data")
+    }
+});
+
 router.get("/photos", authenticate, async (req: Request, res: Response) => {
     try {
         const data = await adminService.getAllPhotos();

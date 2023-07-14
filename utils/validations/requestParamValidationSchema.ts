@@ -9,4 +9,6 @@ const basicPagingValidationSchema = [
     query('category').default("all")
 ]
 
+
+
 export default basicPagingValidationSchema;
